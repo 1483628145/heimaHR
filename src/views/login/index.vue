@@ -38,8 +38,8 @@ export default {
     return {
       // 登录表单
       loginForm: {
-        mobile: '',
-        passwd: '',
+        mobile: '13800000002',
+        passwd: 'itHeiMa@20251016',
         isAgree: false
       },
       // 登录表单校验
@@ -100,7 +100,8 @@ export default {
       this.$refs.loginRef.validate((isOk) => {
         if (isOk) {
           // 通过表单校验
-          alert('校验通过')
+          // alert('校验通过')
+          this.$store.dispatch('user/login', this.loginForm)
         }
       })
     }
