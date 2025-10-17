@@ -1,87 +1,68 @@
-import axios from 'axios'
-import { MessageBox, Message } from 'element-ui'
-import store from '@/store'
-import { getToken } from '@/utils/auth'
+// axios 封装
 
-// 封装Axiox请求
-const service = axios.create({
-  baseURL: '/api', // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 5000 // request timeout
+import store from '@/store'
+import Axios from 'axios'
+import { Message } from 'element-ui'
+
+const service = Axios.create({
+  baseURL: '/api', // 基础地址 所有的请求都会在前面添加 /api
+  timeout: 5000
 })
 
-// request interceptor
+// 请求拦截器 在所有请求发起前做的事
 service.interceptors.request.use(
+  // 传递俩个回调函数作为参数
+  // 其中第一个是成功的回调 第二个是失败的回调
   config => {
-    // do something before request is sent
-
+    // 请求成功 注入token
+    // store.getters.token
+    // 判断是否存在token
     if (store.getters.token) {
-      // let each request carry token
-      // ['X-Token'] is a custom headers key
-      // please modify it according to the actual situation
-      config.headers['X-Token'] = getToken()
+      // 注入token
+      config.headers.Authorization = `Bearer ${store.getters.token}`
+      // 跳转到主页
     }
     return config
   },
   error => {
-    // do something with request error
-    console.log(error) // for debug
+    // 失败 终止当前
     return Promise.reject(error)
   }
 )
 
-// response interceptor
+// 响应拦截器  主要是解构数据和处理异常请求
+// 在所有请求发起后做的事
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-   */
-
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
+  // 当响应成功的时候
   response => {
-    const res = response.data
-
-    // if the custom code is not 20000, it is judged as an error.
-    if (res.code !== 20000) {
+    // 将响应结果解构出来
+    const { data, message, success } = response.data
+    // 响应成功且请求成功
+    if (success) {
       Message({
-        message: res.message || 'Error',
-        type: 'error',
-        duration: 5 * 1000
+        type: 'success',
+        message: message
       })
-
-      // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-        // to re-login
-        MessageBox.confirm(
-          'You have been logged out, you can cancel to stay on this page, or log in again',
-          'Confirm logout',
-          {
-            confirmButtonText: 'Re-Login',
-            cancelButtonText: 'Cancel',
-            type: 'warning'
-          }
-        ).then(() => {
-          store.dispatch('user/resetToken').then(() => {
-            location.reload()
-          })
-        })
-      }
-      return Promise.reject(new Error(res.message || 'Error'))
-    } else {
-      return res
+      return data
+    }
+    // 响应成功但是请求失败
+    else {
+      Message({
+        type: 'error',
+        message: message
+      })
+      return Promise.reject(new Error(message))
     }
   },
+  // 响应失败的时候
   error => {
-    console.log('err' + error) // for debug
+    // 提示消息 使用elementui调用message
+
     Message({
-      message: error.message,
       type: 'error',
-      duration: 5 * 1000
+      message: error.message
     })
+
     return Promise.reject(error)
   }
 )

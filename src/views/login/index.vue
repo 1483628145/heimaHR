@@ -14,8 +14,8 @@
             <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
           </el-form-item>
           <!-- 密码 show-password 可以显示和隐藏密码 -->
-          <el-form-item prop="passwd">
-            <el-input v-model="loginForm.passwd" show-password placeholder="请输入密码"></el-input>
+          <el-form-item prop="password">
+            <el-input v-model="loginForm.password" show-password placeholder="请输入密码"></el-input>
           </el-form-item>
           <!-- 使用协议 -->
           <el-form-item prop="isAgree">
@@ -39,8 +39,8 @@ export default {
       // 登录表单
       loginForm: {
         mobile: '13800000002',
-        passwd: 'itHeiMa@20251016',
-        isAgree: false
+        password: 'itHeiMa@20251017',
+        isAgree: true
       },
       // 登录表单校验
       loginRules: {
@@ -60,7 +60,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        passwd: [
+        password: [
           // 必须输入密码
           {
             required: true,

@@ -10,7 +10,6 @@ const mutations = {
   SETTOKEN(state, token) {
     state.token = token
     // 注意这样保存的token一旦刷新那么token就没有了
-    console.log(state.token)
     // 保存token
     setToken(token)
   },
@@ -29,15 +28,12 @@ const actions = {
   async login(context, loginForm) {
     // console.log(loginForm)
     // 拿到数据调用登录接口，并放回一个token
+    const token = await login(loginForm)
     // 将token给mutation
-    await login(loginForm)
-    const token = '123456'
     context.commit('SETTOKEN', token)
   },
   // 退出登录
   logout(context) {
-    console.log('logout')
-
     context.commit('REMOVETOKEN')
   }
 }
