@@ -32,15 +32,18 @@
 </template>
 <script>
 
+
+
 export default {
   name: "Login",
   data() {
     return {
       // 登录表单
       loginForm: {
-        mobile: '13800000002',
-        password: 'itHeiMa@20251017',
-        isAgree: true
+        // 前面加一个判断如果是开发环境就给账户和密码 否则为空
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? 'itHeiMa@20251017' : '',
+        isAgree: process.env.NODE_ENV === 'development' ? true : false
       },
       // 登录表单校验
       loginRules: {
@@ -97,11 +100,14 @@ export default {
       // 登录之前对表当进行整体校验
       // 里面有一个回调函数，通过这个回调函数里面的isOK来检验是否通过整体表单校验
       // 使用ref拿到整体的表单对象
-      this.$refs.loginRef.validate((isOk) => {
+      this.$refs.loginRef.validate(async (isOk) => {
         if (isOk) {
           // 通过表单校验
           // alert('校验通过')
-          this.$store.dispatch('user/login', this.loginForm)
+          // 通过表单验证 发起登录请求 注意返回的是一个promise
+          await this.$store.dispatch('user/login', this.loginForm)
+          // 拿到token 跳转到主页
+          this.$router.push('/')
         }
       })
     }

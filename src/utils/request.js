@@ -1,11 +1,11 @@
 // axios 封装
-
+// 导入包
 import store from '@/store'
 import Axios from 'axios'
 import { Message } from 'element-ui'
 
 const service = Axios.create({
-  baseURL: '/api', // 基础地址 所有的请求都会在前面添加 /api
+  baseURL: process.env.VUE_APP_BASE_API, // 基础地址 所有的请求都会在前面添加 /api
   timeout: 5000
 })
 
