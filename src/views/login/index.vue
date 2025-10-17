@@ -8,14 +8,22 @@
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
         <!-- el-form > el-form-item > el-input -->
-        <el-form>
-          <el-form-item>
-            <el-input placeholder="请输入手机号"></el-input>
-            <el-input style="margin-top: 10px;" placeholder="请输入密码"></el-input>
-            <el-checkbox>用户使用协议</el-checkbox>
+        <el-form ref="loginRef" :model="loginForm" :rules="loginRules">
+          <!-- 手机号 -->
+          <el-form-item prop="mobile">
+            <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
           </el-form-item>
+          <!-- 密码 show-password 可以显示和隐藏密码 -->
+          <el-form-item prop="passwd">
+            <el-input v-model="loginForm.passwd" show-password placeholder="请输入密码"></el-input>
+          </el-form-item>
+          <!-- 使用协议 -->
+          <el-form-item prop="isAgree">
+            <el-checkbox v-model="loginForm.isAgree">用户使用协议</el-checkbox>
+          </el-form-item>
+          <!-- 登录按钮 -->
           <el-form-item>
-            <el-button style="width: 350px;" type="primary">登录</el-button>
+            <el-button style="width: 350px;" type="primary" @click="login">登录</el-button>
           </el-form-item>
         </el-form>
       </el-card>
@@ -23,15 +31,79 @@
   </div>
 </template>
 <script>
+
 export default {
   name: "Login",
   data() {
     return {
+      // 登录表单
+      loginForm: {
+        mobile: '',
+        passwd: '',
+        isAgree: false
+      },
+      // 登录表单校验
+      loginRules: {
+        mobile: [
+          // 需要俩个校验规则，一个是必须输入，另一个是格式校验
+          // 必须输入
+          {
+            required: true,
+            message: '请输入手机号',
+            // 失去焦点的时候触发校验规则
+            trigger: 'blur'
+          },
+          // 格式校验
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: '输入的手机号格式不正确',
+            trigger: 'blur'
+          }
+        ],
+        passwd: [
+          // 必须输入密码
+          {
+            required: true,
+            message: '请输入密码',
+            // 失去焦点的时候触发校验规则
+            trigger: 'blur'
+          },
+          // 设置长度
+          {
+            min: 6,
+            max: 16,
+            message: '密码长度应该是6-12位之间',
+            trigger: 'blur'
+          }
+        ],
+        isAgree: [{
+          // required 只能检测 undefined '' null 这三种情况
+          // 所以在这里使用自定义函数来做校验
+          validator: (rule, value, callback) => {
+            // rule 校验规则
+            // value 校验的值
+            // callback 函数 执行代表说明成功 失败的话需要new一个失败对象，然后放失败信息
+            value ? callback() : callback(new Error('你必须勾选使用协议！'))
+          }
+        }
 
+        ]
+      }
     };
   },
   methods: {
-
+    // 登录
+    login() {
+      // 登录之前对表当进行整体校验
+      // 里面有一个回调函数，通过这个回调函数里面的isOK来检验是否通过整体表单校验
+      // 使用ref拿到整体的表单对象
+      this.$refs.loginRef.validate((isOk) => {
+        if (isOk) {
+          // 通过表单校验
+          alert('校验通过')
+        }
+      })
+    }
   },
 };
 </script>
