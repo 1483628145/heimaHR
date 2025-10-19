@@ -33,20 +33,20 @@
 
     <!-- 修改密码 对话框 -->
     <!-- 注意这个弹出层需要放置在最外层div的上一层级 -->
-    <el-dialog title="收货地址" :visible.sync="dialogFormVisible">
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
       <el-form :model="updatePasswordForm" ref="updatePasswdRef" :rules="updatePasswdRules">
         <el-form-item label="原密码:" prop="oldPassword">
-          <el-input v-model="updatePasswordForm.oldPassword"></el-input>
+          <el-input show-password v-model="updatePasswordForm.oldPassword"></el-input>
         </el-form-item>
         <el-form-item label="新密码:" prop="newPassword">
-          <el-input v-model="updatePasswordForm.newPassword"></el-input>
+          <el-input show-password v-model="updatePasswordForm.newPassword"></el-input>
         </el-form-item>
         <el-form-item label="确认新密码:" prop="confirmNewPassword">
-          <el-input v-model="updatePasswordForm.confirmNewPassword"></el-input>
+          <el-input show-password v-model="updatePasswordForm.confirmNewPassword"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button>取 消</el-button>
+        <el-button @click="cancelUpdate">取 消</el-button>
         <el-button type="primary" @click="confiremUpdatePassword">确 定</el-button>
       </div>
     </el-dialog>
@@ -58,12 +58,13 @@
 import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
+import { updatePassword } from '@/api/user'
 
 export default {
   data() {
     return {
       // 弹出层
-      dialogFormVisible: true,
+      dialogFormVisible: false,
       // 更新密码表单
       updatePasswordForm: {
         oldPassword: '',
@@ -144,9 +145,22 @@ export default {
     // 确认修改密码
     confiremUpdatePassword() {
       // 表单验证
-
-      // 调用接口修改密码
-      // 
+      this.$refs.updatePasswdRef.validate(async (isOk) => {
+        if (isOk) {
+          // 通过验证发起修改密码
+          await updatePassword(this.updatePasswordForm)
+          this.$message.success('密码修改成功！')
+          // 请求成功清除表单数据
+          this.$refs.updatePasswdRef.resetFields()
+          // 请求成功关闭弹窗
+          this.dialogFormVisible = false
+        }
+      })
+    },
+    // 取消修改密码
+    cancelUpdate() {
+      this.$refs.updatePasswdRef.resetFields()
+      this.dialogFormVisible = false
     }
   }
 }
