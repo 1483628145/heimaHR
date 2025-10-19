@@ -7,21 +7,19 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar">
-          <i class="el-icon-caret-bottom" />
+          <!-- 用户头像 -->
+          <img :src="avatar" class="user-avatar">
+          <!-- 用户角色 -->
+          <span>{{ username }}</span>
+          <i class="el-icon-setting" />
         </div>
+        <!-- 弹窗 -->
         <el-dropdown-menu slot="dropdown" class="user-dropdown">
           <router-link to="/">
             <el-dropdown-item>
-              Home
+              主页
             </el-dropdown-item>
           </router-link>
-          <a target="_blank" href="https://github.com/PanJiaChen/vue-admin-template/">
-            <el-dropdown-item>Github</el-dropdown-item>
-          </a>
-          <a target="_blank" href="https://panjiachen.github.io/vue-element-admin-site/#/">
-            <el-dropdown-item>Docs</el-dropdown-item>
-          </a>
           <el-dropdown-item divided @click.native="logout">
             <span style="display:block;">退出登录</span>
           </el-dropdown-item>
@@ -44,7 +42,8 @@ export default {
   computed: {
     ...mapGetters([
       'sidebar',
-      'avatar'
+      'avatar',
+      'username'
     ])
   },
   methods: {
@@ -117,6 +116,9 @@ export default {
       .avatar-wrapper {
         margin-top: 5px;
         position: relative;
+        display: flex;
+        align-items: center;
+
 
         .user-avatar {
           cursor: pointer;
@@ -125,12 +127,14 @@ export default {
           border-radius: 10px;
         }
 
-        .el-icon-caret-bottom {
+        span {
           cursor: pointer;
-          position: absolute;
-          right: -20px;
-          top: 25px;
-          font-size: 12px;
+          margin: 0px 5px;
+        }
+
+        .el-icon-setting {
+          cursor: pointer;
+          font-size: 20px;
         }
       }
     }
