@@ -1,5 +1,6 @@
 // axios 封装
 // 导入包
+import router from '@/router'
 import store from '@/store'
 import Axios from 'axios'
 import { Message } from 'element-ui'
@@ -34,9 +35,10 @@ service.interceptors.request.use(
 // 在所有请求发起后做的事
 service.interceptors.response.use(
   // 当响应成功的时候
-  response => {
+  async response => {
     // 将响应结果解构出来
-    const { data, message, success } = response.data
+    const { data, message, success, code } = response.data
+
     // 响应成功且请求成功
     if (success) {
       if (!response.config.noMessage) {
@@ -57,14 +59,24 @@ service.interceptors.response.use(
     }
   },
   // 响应失败的时候
-  error => {
-    // 提示消息 使用elementui调用message
-
-    Message({
-      type: 'error',
-      message: error.message
-    })
-
+  async error => {
+    if (error.response.status === 401) {
+      // console.log('401')
+      // 清除本地token
+      await store.dispatch('user/logout')
+      // 到登录页面
+      router.push('/login')
+      Message({
+        type: 'error',
+        message: error.response.data.message
+      })
+    } else {
+      // 提示消息 使用elementui调用message
+      Message({
+        type: 'error',
+        message: error.message
+      })
+    }
     return Promise.reject(error)
   }
 )

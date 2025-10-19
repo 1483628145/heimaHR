@@ -21,18 +21,19 @@ const mutations = {
     state.token = null
     // 删除本地token
     removeToken()
+    // 删除用户信息
+    state.userInfo = {}
   },
 
   // 保存用户信息
   SETUSERINFO(state, userInfo) {
     // 保存到用户资料到VueX
     state.userInfo = userInfo
-    console.log(state.userInfo)
   }
 }
 
 const actions = {
-  // login 登录
+  // 登录
   async login(context, loginForm) {
     // console.log(loginForm)
     // 拿到数据调用登录接口，并放回一个token
