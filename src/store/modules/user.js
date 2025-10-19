@@ -1,8 +1,9 @@
 import { getToken, removeToken, setToken } from '@/utils/auth'
-import { login } from '@/api/user'
+import { login, getUserInfo } from '@/api/user'
 
 const state = {
-  token: getToken() //从缓存中拿到数据
+  token: getToken(), //从缓存中拿到数据
+  userInfo: {} // 用户资料
 }
 
 const mutations = {
@@ -20,6 +21,13 @@ const mutations = {
     state.token = null
     // 删除本地token
     removeToken()
+  },
+
+  // 保存用户信息
+  SETUSERINFO(state, userInfo) {
+    // 保存到用户资料到VueX
+    state.userInfo = userInfo
+    console.log(state.userInfo)
   }
 }
 
@@ -32,9 +40,17 @@ const actions = {
     // 将token给mutation
     context.commit('SETTOKEN', token)
   },
+
   // 退出登录
   logout(context) {
     context.commit('REMOVETOKEN')
+  },
+
+  // 获取用户信息
+  async getUserInfo(context) {
+    // 获取用户资料
+    const userInfo = await getUserInfo()
+    context.commit('SETUSERINFO', userInfo)
   }
 }
 

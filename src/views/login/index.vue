@@ -42,7 +42,7 @@ export default {
       loginForm: {
         // 前面加一个判断如果是开发环境就给账户和密码 否则为空
         mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
-        password: process.env.NODE_ENV === 'development' ? 'itHeiMa@20251017' : '',
+        password: process.env.NODE_ENV === 'development' ? 'itHeiMa@20251018' : '',
         isAgree: process.env.NODE_ENV === 'development' ? true : false
       },
       // 登录表单校验

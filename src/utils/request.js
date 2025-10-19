@@ -39,10 +39,12 @@ service.interceptors.response.use(
     const { data, message, success } = response.data
     // 响应成功且请求成功
     if (success) {
-      Message({
-        type: 'success',
-        message: message
-      })
+      if (!response.config.noMessage) {
+        Message({
+          type: 'success',
+          message: message
+        })
+      }
       return data
     }
     // 响应成功但是请求失败

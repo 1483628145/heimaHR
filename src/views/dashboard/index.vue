@@ -13,7 +13,11 @@ export default {
     ...mapGetters([
       'name'
     ])
-  }
+  },
+  // created() {
+  //   // 获取用户资料
+  //   this.$store.dispatch('user/getUserInfo')
+  // }
 }
 </script>
 
@@ -22,6 +26,7 @@ export default {
   &-container {
     margin: 30px;
   }
+
   &-text {
     font-size: 30px;
     line-height: 46px;

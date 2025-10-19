@@ -8,13 +8,13 @@ import store from './store'
 // 路由前置守卫
 const whiteList = ['/login', '/404']
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   // to 到那里去
   // from 从哪里来
   // next 必须要执行
   nProgress.start()
 
-  // 判断是否有token
+  // 有token
   if (store.getters.token) {
     // 判断是不是去的登录
     if (to.path === '/login') {
@@ -24,7 +24,13 @@ router.beforeEach((to, from, next) => {
       nProgress.done()
     } else {
       // 有token的情况下去非登录页，直接放行
-      next()
+      // 判断是否有用户资料有的情况下直接放行没有则获取
+      if (!store.getters.userId) {
+        await store.dispatch('user/getUserInfo')
+        next()
+      } else {
+        next()
+      }
     }
   } else {
     // 没有token的情况
